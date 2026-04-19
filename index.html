@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nordis Tech — Autonomous Systems Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Barlow:wght@300;400;500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #181818;
+      --bg-2:       #1f1f1f;
+      --bg-3:       #272727;
+
+      --border:     rgba(255,255,255,0.07);
+      --border-mid: rgba(255,255,255,0.13);
+      --border-light: rgba(255,255,255,0.22);
+
+      /* Text — lifted significantly */
+      --text:       #f0ebe6;
+      --text-dim:   #b8b0a8;
+      --text-mid:   #8a837c;
+      --text-faint: #565050;
+
+      /* Crimson — wordmark only */
+      --red:        #7a1220;
+
+      /* Slate — accent, interactive */
+      --slate:      #5c7a8f;
+      --slate-light:#8aacbe;
+      --slate-dim:  rgba(92,122,143,0.12);
+      --slate-glow: rgba(92,122,143,0.18);
+
+      /* Dual-use tag colours */
+      --tag-def:         rgba(92,122,143,0.15);
+      --tag-def-border:  rgba(92,122,143,0.35);
+      --tag-civ:         rgba(160,140,100,0.15);
+      --tag-civ-border:  rgba(160,140,100,0.35);
+      --tag-civ-text:    #c4a96e;
+      --du-text-col:     #c8c0b8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 999; opacity: 0.5;
+    }
+
+    /* ── DEV BANNER ── */
+    .dev-banner {
+      background: var(--bg-2);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      padding: 0.6rem 2rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+    .dev-banner span { color: var(--slate-light); margin-right: 0.5rem; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 4rem;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.4s, background 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(24,24,24,0.96);
+      border-color: var(--border);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-logo {
+      display: flex; align-items: baseline; gap: 0.5rem;
+      text-decoration: none;
+    }
+    .nav-logo-main {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.35rem;
+      letter-spacing: 0.18em;
+      color: var(--text);
+    }
+    .nav-logo-main span { color: var(--red); }
+    .nav-logo-tech {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      font-weight: 400;
+      padding-bottom: 0.1rem;
+    }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-mid); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 9rem 4rem 6rem;
+      position: relative; overflow: hidden;
+    }
+    #hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 10%, transparent 100%);
+    }
+    .hero-glow {
+      position: absolute; top: 20%; right: 10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(92,122,143,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; max-width: 960px; }
+
+    .hero-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.66rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--text-mid);
+      margin-bottom: 2rem;
+      display: flex; align-items: center; gap: 0.75rem;
+      opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+    }
+    .hero-label::before {
+      content: ''; display: block;
+      width: 2rem; height: 1px; background: var(--border-light);
+    }
+
+    h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: clamp(3.2rem, 7vw, 6.5rem);
+      line-height: 1.0; letter-spacing: 0.01em;
+      text-transform: uppercase; color: var(--text);
+      margin-bottom: 1.5rem;
+      opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+    }
+    h1 em { font-style: normal; color: var(--slate-light); }
+
+    .hero-sub {
+      font-size: 1.05rem; font-weight: 300;
+      color: var(--text-dim); max-width: 620px; line-height: 1.8;
+      margin-bottom: 1.75rem;
+      opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+    }
+
+    .hero-dev-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.64rem; letter-spacing: 0.12em;
+      color: var(--text-faint); margin-bottom: 2.5rem;
+      display: flex; align-items: center; gap: 0.6rem;
+      opacity: 0; animation: fadeUp 0.8s 0.7s forwards;
+    }
+    .hero-dev-note::before {
+      content: ''; display: block;
+      width: 6px; height: 6px;
+      border-radius: 50%; background: var(--slate); flex-shrink: 0;
+    }
+
+    .hero-cta {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+    }
+
+    .btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem; letter-spacing: 0.14em;
+      text-transform: uppercase; text-decoration: none;
+      padding: 0.85rem 1.75rem; border-radius: 1px;
+      transition: all 0.2s; display: inline-block;
+    }
+    .btn-primary { background: var(--slate); color: #fff; }
+    .btn-primary:hover { background: var(--slate-light); box-shadow: 0 0 28px var(--slate-glow); }
+    .btn-ghost { border: 1px solid var(--border-mid); color: var(--text-dim); }
+    .btn-ghost:hover { border-color: var(--border-light); color: var(--text); }
+
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 4rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--text-faint);
+      display: flex; align-items: center; gap: 0.75rem;
+      opacity: 0; animation: fadeUp 0.8s 1.2s forwards;
+    }
+    .scroll-hint::after {
+      content: ''; display: block;
+      width: 1px; height: 3rem;
+      background: linear-gradient(to bottom, var(--text-faint), transparent);
+    }
+
+    /* ── SHARED ── */
+    section { padding: 7rem 4rem; position: relative; }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--text-faint);
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-label::before {
+      content: ''; display: block;
+      width: 1.25rem; height: 1px; background: var(--border-mid);
+    }
+
+    h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      letter-spacing: 0.02em; text-transform: uppercase;
+      line-height: 1.1; color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+
+    .section-intro {
+      font-size: 1rem; font-weight: 300;
+      color: var(--text-dim); max-width: 780px;
+      margin-bottom: 4rem; line-height: 1.85;
+    }
+
+    /* ── CAPABILITIES ── */
+    #capabilities { background: var(--bg-2); }
+
+    .capabilities-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .cap-card {
+      background: var(--bg-2); padding: 2.25rem;
+      transition: background 0.25s;
+      display: flex; flex-direction: column;
+    }
+    .cap-card:hover { background: var(--bg-3); }
+
+    .cap-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.56rem; letter-spacing: 0.18em;
+      color: var(--text-faint); margin-bottom: 1.25rem;
+    }
+    .cap-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600; font-size: 1rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--text); margin-bottom: 0.75rem;
+    }
+    .cap-body {
+      font-size: 0.9rem; font-weight: 300;
+      color: var(--text-dim); line-height: 1.75; flex: 1;
+    }
+
+    /* Dual-use */
+    .dual-use {
+      margin-top: 1.4rem; padding-top: 1.1rem;
+      border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 0.5rem;
+    }
+    .du-row {
+      display: flex; align-items: baseline; gap: 0.6rem;
+    }
+    .du-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.54rem; letter-spacing: 0.14em;
+      text-transform: uppercase; flex-shrink: 0;
+      padding: 0.15rem 0.45rem; border-radius: 1px;
+    }
+    .du-label.def {
+      color: var(--slate-light);
+      border: 1px solid var(--tag-def-border);
+      background: var(--tag-def);
+    }
+    .du-label.civ {
+      color: var(--tag-civ-text);
+      border: 1px solid var(--tag-civ-border);
+      background: var(--tag-civ);
+    }
+    .du-text {
+      font-size: 0.82rem; font-weight: 300;
+      color: var(--du-text-col); line-height: 1.5;
+    }
+
+    /* Standards */
+    .standards-tag {
+      margin-top: 1rem;
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+    }
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.54rem; letter-spacing: 0.1em;
+      color: var(--slate-light);
+      border: 1px solid rgba(92,122,143,0.3);
+      padding: 0.2rem 0.5rem; border-radius: 1px;
+    }
+
+    /* Stack closer */
+    .stack-closer {
+      margin-top: 3rem; padding: 1.75rem 2rem;
+      border: 1px solid var(--border); background: var(--bg);
+      display: flex; align-items: center; gap: 1.5rem;
+    }
+    .stack-closer-line {
+      width: 2px; height: 3rem;
+      background: var(--slate); flex-shrink: 0;
+    }
+    .stack-closer-text {
+      font-size: 0.95rem; font-weight: 300;
+      color: var(--text-dim); line-height: 1.7; font-style: italic;
+    }
+    .stack-closer-text strong {
+      color: var(--text); font-weight: 400; font-style: normal;
+    }
+
+    /* ── VOCIS ── */
+    #vocis { background: var(--bg); border-top: 1px solid var(--border); }
+
+    .vocis-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; align-items: center; max-width: 1100px;
+    }
+    .vocis-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--text); margin-bottom: 0.4rem;
+    }
+    .vocis-subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.63rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--text-faint);
+      margin-bottom: 1.75rem;
+    }
+    .vocis-body {
+      font-size: 0.95rem; font-weight: 300;
+      color: var(--text-dim); line-height: 1.85;
+      margin-bottom: 1.1rem;
+    }
+    .vocis-card {
+      border: 1px solid var(--border); background: var(--bg-2);
+      padding: 2.25rem; position: relative; overflow: hidden;
+    }
+    .vocis-card::before {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, var(--slate-dim) 0%, transparent 70%);
+    }
+    .vocis-line {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem; color: var(--text-mid);
+      margin-bottom: 0.65rem; padding-left: 1rem;
+    }
+    .vocis-line::before { content: '— '; color: var(--text-faint); }
+    .vocis-badge {
+      margin-top: 1.75rem; padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.56rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--text-mid);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .vocis-badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%; background: var(--slate); flex-shrink: 0;
+    }
+
+    /* ── ABOUT ── */
+    #about { background: var(--bg-2); border-top: 1px solid var(--border); }
+
+    .about-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; max-width: 1100px;
+    }
+    .about-text p {
+      font-size: 1rem; font-weight: 300;
+      color: var(--text-dim); line-height: 1.85; margin-bottom: 1.25rem;
+    }
+    .about-text p strong { color: var(--text); font-weight: 400; }
+
+    .about-stats {
+      display: flex; flex-direction: column;
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border); align-self: start;
+    }
+    .stat-row {
+      display: flex; align-items: flex-start; gap: 1.25rem;
+      padding: 1.4rem 1.6rem; background: var(--bg-2);
+      transition: background 0.2s;
+    }
+    .stat-row:hover { background: var(--bg-3); }
+    .stat-marker {
+      width: 2px; height: 2rem;
+      background: var(--slate); flex-shrink: 0; margin-top: 0.2rem;
+    }
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--text-faint);
+      margin-bottom: 0.35rem;
+    }
+    .stat-value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem; font-weight: 500;
+      letter-spacing: 0.04em; color: var(--text);
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--bg); border-top: 1px solid var(--border);
+      text-align: center; padding: 8rem 4rem;
+    }
+    .contact-inner { max-width: 520px; margin: 0 auto; }
+    .contact-inner h2 { margin-bottom: 0.75rem; }
+    .contact-inner > p {
+      font-size: 0.95rem; font-weight: 300;
+      color: var(--text-dim); margin-bottom: 3rem; line-height: 1.8;
+    }
+    .contact-block {
+      border: 1px solid var(--border); padding: 2.25rem; background: var(--bg-2);
+    }
+    .contact-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600; font-size: 1.2rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text); margin-bottom: 0.25rem;
+    }
+    .contact-role {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--text-mid);
+      margin-bottom: 1.5rem; display: block;
+    }
+    .contact-divider {
+      width: 2rem; height: 1px;
+      background: var(--border-mid); margin: 0 auto 1.5rem;
+    }
+    .contact-email {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem; letter-spacing: 0.05em;
+      color: var(--text-dim); text-decoration: none;
+      transition: color 0.2s; display: block;
+    }
+    .contact-email:hover { color: var(--slate-light); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2rem 4rem; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-logo {
+      display: flex; align-items: baseline; gap: 0.45rem;
+    }
+    .footer-logo-main {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 1rem;
+      letter-spacing: 0.18em; color: var(--text-faint);
+    }
+    .footer-logo-main span { color: var(--red); }
+    .footer-logo-tech {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.5rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--text-faint);
+      opacity: 0.5;
+    }
+    .footer-copy {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 0.1em; color: var(--text-faint);
+    }
+    .footer-location {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 0.1em; color: var(--text-faint);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .footer-location::before {
+      content: ''; display: inline-block;
+      width: 6px; height: 6px; background: var(--red); border-radius: 50%;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .capabilities-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1.25rem 1.5rem; }
+      .nav-links { display: none; }
+      #hero, section { padding: 5rem 1.5rem; }
+      h1 { font-size: 3rem; }
+      .capabilities-grid { grid-template-columns: 1fr; }
+      .vocis-inner, .about-inner { grid-template-columns: 1fr; gap: 3rem; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+      .scroll-hint { left: 1.5rem; }
+      .stack-closer { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dev-banner">
+    <span>●</span> Nordis is currently in development — enquiries and early partnerships welcome
+  </div>
+
+  <nav id="nav">
+    <a class="nav-logo" href="#hero">
+      <span class="nav-logo-main">NORD<span>IS</span></span>
+      <span class="nav-logo-tech">Tech</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#capabilities">Capabilities</a></li>
+      <li><a href="#vocis">Vocis</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <section id="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <p class="hero-label">Canadian Technology Company</p>
+      <h1>From operations research<br>to <em>operational use.</em></h1>
+      <p class="hero-sub">
+        Built in Canada for allied partners. Nordis develops the integrated software platform
+        for autonomous systems — spanning mission analysis, vehicle design, simulation,
+        and deployment. Engineered to meet the interoperability standards that allied forces depend on.
+      </p>
+      <p class="hero-dev-note">Platform currently in development — enquiries and early partnerships welcome</p>
+      <div class="hero-cta">
+        <a href="#capabilities" class="btn btn-primary">View Capabilities</a>
+        <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+      </div>
+    </div>
+    <div class="scroll-hint">Scroll</div>
+  </section>
+
+  <section id="capabilities">
+    <div class="section-label">Capabilities</div>
+    <h2>Capabilities</h2>
+    <p class="section-intro">
+      Nordis delivers capabilities across defence and civil applications — powered by a common integrated platform.
+      Each capability can be engaged independently or as part of an end-to-end development and fielding pipeline.
+      Built to align with Canada's dual-use defence industrial strategy and NATO interoperability requirements.
+    </p>
+
+    <div class="capabilities-grid reveal">
+
+      <div class="cap-card">
+        <div class="cap-number">01</div>
+        <div class="cap-title">Simulation &amp; Evaluation</div>
+        <p class="cap-body">High-fidelity simulation environment for validating system performance before hardware exists. Enables rapid iteration across vehicle, sensor, and autonomy configurations with full scenario control.</p>
+        <div class="standards-tag">
+          <span class="tag">HLA IEEE 1516</span>
+          <span class="tag">DIS IEEE 1278</span>
+          <span class="tag">STANAG 4586</span>
+          <span class="tag">C2SIM</span>
+        </div>
+        <div class="dual-use">
+          <div class="du-row">
+            <span class="du-label def">Defence</span>
+            <span class="du-text">Platform validation, threat modelling, doctrine development</span>
+          </div>
+          <div class="du-row">
+            <span class="du-label civ">Civil</span>
+            <span class="du-text">Fleet performance testing, environmental scenario modelling</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-number">02</div>
+        <div class="cap-title">Operations Research &amp; Mission Analysis</div>
+        <p class="cap-body">Define the problem before building the solution. Model mission requirements, fleet sizing, coverage optimization, and performance trade spaces to inform what gets built and why.</p>
+        <div class="dual-use">
+          <div class="du-row">
+            <span class="du-label def">Defence</span>
+            <span class="du-text">Force structure analysis, mission envelope definition</span>
+          </div>
+          <div class="du-row">
+            <span class="du-label civ">Civil</span>
+            <span class="du-text">Search and rescue fleet sizing, forestry survey coverage optimization</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-number">03</div>
+        <div class="cap-title">Mission Planning &amp; Deployment</div>
+        <p class="cap-body">Intuitive tools for translating operational objectives into executable missions. Supports collaborative autonomy in GPS-denied and contested environments — deployable across defence and civil operations.</p>
+        <div class="dual-use">
+          <div class="du-row">
+            <span class="du-label def">Defence</span>
+            <span class="du-text">Autonomous patrol coordination, contested environment navigation</span>
+          </div>
+          <div class="du-row">
+            <span class="du-label civ">Civil</span>
+            <span class="du-text">Disaster response deployment, under-canopy mapping, post-event survey</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-number">04</div>
+        <div class="cap-title">Design Optimization</div>
+        <p class="cap-body">Hardware and software co-design across the full vehicle development cycle. Rigorous optimization methods — from classical optimal control to learned approaches — applied to find the best solution within real operational constraints.</p>
+        <div class="dual-use">
+          <div class="du-row">
+            <span class="du-label def">Defence</span>
+            <span class="du-text">Mission-specific platform optimization, GNC algorithm development</span>
+          </div>
+          <div class="du-row">
+            <span class="du-label civ">Civil</span>
+            <span class="du-text">Endurance and payload optimization for survey and logistics applications</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-number">05</div>
+        <div class="cap-title">Warfighter &amp; Operator Training</div>
+        <p class="cap-body">The same simulation environment that informs design supports operational training — creating a continuous feedback loop between capability development and real-world use. Applicable to both military and civil operator training programs.</p>
+        <div class="dual-use">
+          <div class="du-row">
+            <span class="du-label def">Defence</span>
+            <span class="du-text">Warfighter training, mission rehearsal, doctrine validation</span>
+          </div>
+          <div class="du-row">
+            <span class="du-label civ">Civil</span>
+            <span class="du-text">Emergency response operator certification, fleet coordination training</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-number">06</div>
+        <div class="cap-title">Autonomous Vehicle Production</div>
+        <p class="cap-body">The integrated platform is the foundation for Nordis to design, prototype, and produce its own autonomous vehicles — purpose-built for the missions the platform defines. From first simulation to fielded hardware.</p>
+        <div class="dual-use">
+          <div class="du-row">
+            <span class="du-label def">Defence</span>
+            <span class="du-text">Sovereign Canadian autonomous platforms for allied procurement</span>
+          </div>
+          <div class="du-row">
+            <span class="du-label civ">Civil</span>
+            <span class="du-text">Purpose-built vehicles for public safety, environmental, and logistics applications</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="stack-closer reveal">
+      <div class="stack-closer-line"></div>
+      <p class="stack-closer-text">
+        <strong>Each capability stands alone.</strong> Together they close the loop from concept to operational deployment — compressing development timelines and reducing the cost of fielding capable autonomous systems.
+      </p>
+    </div>
+
+  </section>
+
+  <section id="vocis">
+    <div class="section-label">Independent Product Line</div>
+    <div class="vocis-inner">
+      <div class="reveal">
+        <div class="vocis-name">Vocis</div>
+        <div class="vocis-subtitle">Secure Language Intelligence</div>
+        <p class="vocis-body">
+          In high-stakes environments, the accuracy and security of spoken information matters as much as the decision it informs.
+        </p>
+        <p class="vocis-body">
+          Vocis is a private, on-device platform for voice transcription, summarization, and structured documentation — with no data leaving the local environment. Designed initially for clinical and medical applications where transcript integrity and patient privacy are non-negotiable, the platform is domain-agnostic and applicable wherever sensitive voice intelligence requires secure handling.
+        </p>
+      </div>
+      <div class="vocis-card reveal">
+        <div class="vocis-line">initializing secure session</div>
+        <div class="vocis-line">local inference engine ready</div>
+        <div class="vocis-line">transcribing on-device</div>
+        <div class="vocis-line">no external data transmission</div>
+        <div class="vocis-line">generating structured summary</div>
+        <div class="vocis-line">session complete</div>
+        <div class="vocis-badge">
+          <div class="vocis-badge-dot"></div>
+          On-Device Processing · Zero Data Egress · Privacy by Design
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="section-label">About</div>
+    <div class="about-inner">
+      <div class="about-text reveal">
+        <h2>About Nordis</h2>
+        <p>Nordis is a <strong>Canadian technology company</strong> building the integrated software platform for autonomous systems development — spanning defence, public safety, and environmental applications — and the tools to deploy them.</p>
+        <p>Founded by a military veteran and defence engineer who spent a decade inside the primes — now closing the gap between simulation, design, and deployment.</p>
+        <p>We are based in Vancouver, British Columbia, and built from the ground up to serve Canada and its allied partners.</p>
+      </div>
+      <div class="about-stats reveal">
+        <div class="stat-row">
+          <div class="stat-marker"></div>
+          <div>
+            <div class="stat-label">Founder</div>
+            <div class="stat-value">Justin Behling</div>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-marker"></div>
+          <div>
+            <div class="stat-label">Headquarters</div>
+            <div class="stat-value">Vancouver, British Columbia</div>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-marker"></div>
+          <div>
+            <div class="stat-label">Focus</div>
+            <div class="stat-value">Autonomous Systems · Secure NLP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="contact-inner">
+      <div class="section-label" style="justify-content:center;">Contact</div>
+      <h2>Work With Us</h2>
+      <p>Nordis welcomes enquiries from allied partners, government agencies, researchers, and potential collaborators.</p>
+      <div class="contact-block reveal">
+        <div class="contact-name">Justin Behling</div>
+        <span class="contact-role">Founder · Nordis Tech Inc.</span>
+        <div class="contact-divider"></div>
+        <a class="contact-email" href="mailto:info@nordistech.ca">info@nordistech.ca</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">
+      <span class="footer-logo-main">NORD<span>IS</span></span>
+      <span class="footer-logo-tech">Tech</span>
+    </div>
+    <div class="footer-copy">© 2026 Nordis Tech Inc. All rights reserved.</div>
+    <div class="footer-location">Vancouver, BC · Canada</div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
