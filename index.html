@@ -4,6 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nordis Tech — Autonomous Systems Platform</title>
+  <meta name="description" content="From operations research to operational use. Nordis develops the integrated software platform for autonomous systems — mission analysis, vehicle design, simulation, and deployment. Built in Canada for allied partners." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <!-- assets/nordis-sig.png is hotlinked by the company email signature — the path must never move. -->
+  <meta property="og:title" content="Nordis Tech — Autonomous Systems Platform" />
+  <meta property="og:description" content="From operations research to operational use. The integrated software platform for autonomous systems — mission analysis, vehicle design, simulation, and deployment. Built in Canada for allied partners." />
+  <meta property="og:image" content="https://nordistech.ca/assets/nordis-sig.png" />
+  <meta property="og:url" content="https://nordistech.ca/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Barlow:wght@300;400;500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -91,9 +100,10 @@
     }
 
     .nav-logo {
-      display: flex; align-items: baseline; gap: 0.5rem;
+      display: flex; align-items: center; gap: 0.5rem;
       text-decoration: none;
     }
+    .nav-logo-img { height: 26px; width: auto; display: block; }
     .nav-logo-main {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 700;
@@ -547,8 +557,7 @@
 
   <nav id="nav">
     <a class="nav-logo" href="#hero">
-      <span class="nav-logo-main">NORD<span>IS</span></span>
-      <span class="nav-logo-tech">Tech</span>
+      <img class="nav-logo-img" src="assets/nordis-sig.png" alt="Nordis Tech" />
     </a>
     <ul class="nav-links">
       <li><a href="#capabilities">Capabilities</a></li>
@@ -593,10 +602,7 @@
         <div class="cap-title">Simulation &amp; Evaluation</div>
         <p class="cap-body">High-fidelity simulation environment for validating system performance before hardware exists. Enables rapid iteration across vehicle, sensor, and autonomy configurations with full scenario control.</p>
         <div class="standards-tag">
-          <span class="tag">HLA IEEE 1516</span>
-          <span class="tag">DIS IEEE 1278</span>
-          <span class="tag">STANAG 4586</span>
-          <span class="tag">C2SIM</span>
+          <span class="tag">SAPIENT BSI Flex 335</span>
         </div>
         <div class="dual-use">
           <div class="du-row">
@@ -629,7 +635,7 @@
       <div class="cap-card">
         <div class="cap-number">03</div>
         <div class="cap-title">Mission Planning &amp; Deployment</div>
-        <p class="cap-body">Intuitive tools for translating operational objectives into executable missions. Supports collaborative autonomy in GPS-denied and contested environments — deployable across defence and civil operations.</p>
+        <p class="cap-body">In development: intuitive tools for translating operational objectives into executable missions, built toward collaborative autonomy in GPS-denied and contested environments — for both defence and civil operations.</p>
         <div class="dual-use">
           <div class="du-row">
             <span class="du-label def">Defence</span>
@@ -645,7 +651,7 @@
       <div class="cap-card">
         <div class="cap-number">04</div>
         <div class="cap-title">Design Optimization</div>
-        <p class="cap-body">Hardware and software co-design across the full vehicle development cycle. Rigorous optimization methods — from classical optimal control to learned approaches — applied to find the best solution within real operational constraints.</p>
+        <p class="cap-body">Hardware and software co-design across the full vehicle development cycle. Rigorous, physics-based optimization methods applied to find the best solution within real operational constraints — from mission specification to a buildable airframe and a validated stability and control model.</p>
         <div class="dual-use">
           <div class="du-row">
             <span class="du-label def">Defence</span>
@@ -661,7 +667,7 @@
       <div class="cap-card">
         <div class="cap-number">05</div>
         <div class="cap-title">Warfighter &amp; Operator Training</div>
-        <p class="cap-body">The same simulation environment that informs design supports operational training — creating a continuous feedback loop between capability development and real-world use. Applicable to both military and civil operator training programs.</p>
+        <p class="cap-body">The same simulation environment that informs design extends to operational training — a continuous feedback loop between capability development and real-world use, applicable to both military and civil operator training programs.</p>
         <div class="dual-use">
           <div class="du-row">
             <span class="du-label def">Defence</span>
@@ -711,7 +717,10 @@
           In high-stakes environments, the accuracy and security of spoken information matters as much as the decision it informs.
         </p>
         <p class="vocis-body">
-          Vocis is a private, on-device platform for voice transcription, summarization, and structured documentation — with no data leaving the local environment. Designed initially for clinical and medical applications where transcript integrity and patient privacy are non-negotiable, the platform is domain-agnostic and applicable wherever sensitive voice intelligence requires secure handling.
+          Vocis is a private, on-device platform for voice transcription and structured documentation — with no data leaving the local environment. It plugs in and types like a keyboard: it works with anything that has a text field, with no integration project, no app to install, and no vendor cooperation required.
+        </p>
+        <p class="vocis-body">
+          Designed initially for clinical and medical applications where transcript integrity and patient privacy are non-negotiable — audio physically cannot leave the room — the platform is domain-agnostic and applicable wherever sensitive voice intelligence requires secure handling.
         </p>
       </div>
       <div class="vocis-card reveal">
@@ -719,7 +728,7 @@
         <div class="vocis-line">local inference engine ready</div>
         <div class="vocis-line">transcribing on-device</div>
         <div class="vocis-line">no external data transmission</div>
-        <div class="vocis-line">generating structured summary</div>
+        <div class="vocis-line">filling provider-authored template</div>
         <div class="vocis-line">session complete</div>
         <div class="vocis-badge">
           <div class="vocis-badge-dot"></div>
